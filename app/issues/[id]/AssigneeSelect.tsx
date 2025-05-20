@@ -1,47 +1,33 @@
 "use client";
+import React from "react";
 import { Issue, User } from "@prisma/client";
 import { Select } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import React, { useEffect } from "react";
-import { Skeleton } from "../../components";
 import toast, { Toaster } from "react-hot-toast";
+import { Skeleton } from "../../components";
 
 const AssigneeSelect = ({ issue }: { issue: Issue }) => {
-  const {
-    data: users,
-    error,
-    isLoading,
-  } = useQuery<User[]>({
-    queryKey: ["users"],
-    queryFn: async () => {
-      const { data } = await axios.get<User[]>("/api/users");
-      return data;
-    },
-    staleTime: 1000 * 60 * 5,
-    retry: 2,
-  });
+  const { data: users, error, isLoading } = useUsers();
 
   if (error) return null;
 
   if (isLoading) return <Skeleton />;
 
+  const assignIssue = async (userId: string): Promise<void> => {
+    try {
+      await axios.patch("/api/issues/" + issue.id, {
+        assignedToUserId: userId && userId !== "__unassigned__" ? userId : null,
+      });
+    } catch (error) {
+      toast.error("Changes could not be saved");
+    }
+  };
   return (
     <>
       <Select.Root
         defaultValue={issue.assignedToUserId || "__unassigned__"}
-        onValueChange={async (userId) => {
-          console.log("userId", userId);
-          console.log("issue", issue);
-          try {
-            await axios.patch("/api/issues/" + issue.id, {
-              assignedToUserId:
-                userId && userId !== "__unassigned__" ? userId : null,
-            });
-          } catch (error) {
-            toast.error("Changes could not be saved");
-          }
-        }}
+        onValueChange={assignIssue}
       >
         <Select.Trigger placeholder="Assign.." />
         <Select.Content>
@@ -60,5 +46,16 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
     </>
   );
 };
+
+const useUsers = () =>
+  useQuery<User[]>({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const { data } = await axios.get<User[]>("/api/users");
+      return data;
+    },
+    staleTime: 1000 * 60 * 5,
+    retry: 2,
+  });
 
 export default AssigneeSelect;
