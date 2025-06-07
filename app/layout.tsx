@@ -7,6 +7,7 @@ import NavBar from "./NavBar";
 import { Container, Theme } from "@radix-ui/themes";
 import AuthProvider from "./auth/Provider";
 import QueryClientProvider from "./QueryClientProvider";
+// import InsertDummyIssues from "./insertDummyIssues";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,8 @@ export default function RootLayout({
           <AuthProvider>
             <Theme accentColor="plum" radius="large">
               <NavBar />
+              {/* Enable it when dummy data is needed in prisma */}
+              {/* <InsertDummyIssues /> */}
               <main className="p-5">
                 <Container>{children}</Container>
               </main>
