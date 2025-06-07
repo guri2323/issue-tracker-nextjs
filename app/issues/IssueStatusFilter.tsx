@@ -4,7 +4,7 @@ import { Select } from "@radix-ui/themes";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
-const statuses: { label: string; value?: Status }[] = [
+const statuses: { label: string; value: Status | "ALL" }[] = [
   { label: "ALL", value: "ALL" },
   { label: "OPEN", value: "OPEN" },
   { label: "IN_PROGRESS", value: "IN_PROGRESS" },

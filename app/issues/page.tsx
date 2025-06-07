@@ -6,7 +6,7 @@ import IssuesTable from "./IssuesTable";
 import { Flex } from "@radix-ui/themes";
 
 interface Props {
-  searchParams: { status: Status; orderBy: keyof Issue; page: string };
+  searchParams: Promise<{ status: Status; orderBy: keyof Issue; page: string }>;
 }
 
 const IssuesPage = async ({ searchParams }: Props) => {
